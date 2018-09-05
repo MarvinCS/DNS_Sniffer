@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import util
 
 
 class DB_Connector:
@@ -13,6 +14,7 @@ class DB_Connector:
         return DB_Connector.__instance
 
     def __init__(self, db_name="dns.db"):
+        """Constructor"""
         if DB_Connector.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
@@ -21,6 +23,7 @@ class DB_Connector:
             self.initialise()
 
     def initialise(self):
+        """Initialises the tables of the database"""
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
         c = self.connection.cursor()
         for file in os.listdir(ROOT_DIR + '/sql'):
@@ -30,36 +33,82 @@ class DB_Connector:
         self.connection.commit()
         c.close()
 
+    def execute_query(self, qry):
+        """Executes a query"""
+        c = self.connection.cursor()
+        c.execute(qry)
+        c.close()
+
+    def fetch(self, qry):
+        """Fetches data based on query"""
+        c = self.connection.cursor()
+        result = c.execute(qry).fetchone()
+        c.close()
+        return result
+
     ### Start of domain section ###
 
     def hasDomain(self, name: str):
+        """Returns True if the given domain-name exists in the database"""
         return self.getDomainId(name) is not None
 
     def addDomain(self, domain_name: str):
-        qry = "INSERT INTO domains (name) VALUES (\"%s\")" % domain_name
-        print(qry)
-        c = self.connection.cursor()
-        c.execute(qry)
+        """Adds the given domain-name to database"""
+        now = util.now()
+        qry = 'INSERT INTO domains (name, created_at, updated_at) VALUES ("%s", "%s", "%s")' % (domain_name, now, now)
+        self.execute_query(qry)
         self.connection.commit()
-        c.close()
 
     def getDomainId(self, name: str):
-        qry = "SELECT id FROM domains where name LIKE \"%s\"" % name
-        c = self.connection.cursor()
-        domain_id = c.execute(qry).fetchone()
-        c.close()
-        return domain_id
+        """Returns domain-id of the given name"""
+        qry = 'SELECT id FROM domains where name LIKE "%s"' % name
+        return self.fetch(qry)
 
     def getDomain(self, domain_id):
+        """Returns the domain-name"""
         qry = "SELECT name FROM domains where id = %d" % domain_id
-        c = self.connection.cursor()
-        name = c.execute(qry).fetchone()
-        c.close()
-        return name
+        return self.fetch(qry)
 
     ### Start of server section ###
 
+    def hasServer(self, name: str):
+        """Returns True if the given server-name exists in the database"""
+        return self.getServerID(name) is not None
+
+    def addServer(self, server_name: str):
+        """Adds the given ip to database"""
+        now = util.now()
+        qry = 'INSERT INTO server (ip, created_at, updated_at) VALUES ("%s", "%s", "%s")' % (server_name, now, now)
+        self.execute_query(qry)
+        self.connection.commit()
+
+    def getServerID(self, name: str):
+        """Returns server-id of the given name"""
+        qry = 'SELECT id FROM server where ip LIKE "%s"' % name
+        return self.fetch(qry)
+
+    def getServer(self, server_id):
+        """Returns the server-name"""
+        qry = "SELECT ip FROM server where id = %d" % server_id
+        return self.fetch(qry)
+
+    ### Start of request section ###
+
+    def addRequest(self, domain: str, dnsServer: str, ip="", mac=""):
+        if not self.hasDomain(domain):
+            self.addDomain(domain)
+        domain_id = self.getDomainId(domain)
+        if not self.hasServer(dnsServer):
+            self.addServer(dnsServer)
+        server_id = self.getServerID(dnsServer)
+        now = util.now()
+        qry = 'INSERT INTO requests (ip, mac, domain_name, server, created_at, updated_at) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
+            ip, mac, domain_id, server_id, now, now)
+        self.execute_query(qry)
+        self.connection.commit()
+
 
 if __name__ == '__main__':
-    db_connector = DB_Connector.getInstance()
+    db_connector = DB_Connector()
     db_connector.initialise()
+    db_connector.addRequest("google.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
