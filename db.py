@@ -46,6 +46,13 @@ class DB_Connector:
         c.close()
         return result
 
+    def fetchAll(self, qry):
+        """Fetch all data based on query"""
+        c = self.connection.cursor()
+        result = c.execute(qry).fetchall()
+        c.close()
+        return result
+
     ### Start of domain section ###
 
     def hasDomain(self, name: str):
@@ -68,6 +75,11 @@ class DB_Connector:
         """Returns the domain-name"""
         qry = "SELECT name FROM domains where id = %d" % domain_id
         return self.fetch(qry)
+
+    def getAllDomains(self):
+        """Returns all entrys in domain-table"""
+        qry = "SELECT * FROM domains"
+        return self.fetchAll(qry)
 
     ### Start of server section ###
 
@@ -92,6 +104,11 @@ class DB_Connector:
         qry = "SELECT ip FROM server where id = %d" % server_id
         return self.fetch(qry)
 
+    def getAllServer(self):
+        """Returns all entrys in server-table"""
+        qry = "SELECT * FROM server"
+        return self.fetchAll(qry)
+
     ### Start of request section ###
 
     def addRequest(self, domain: str, dnsServer: str, ip="", mac=""):
@@ -107,8 +124,19 @@ class DB_Connector:
         self.execute_query(qry)
         self.connection.commit()
 
+    def getAllRequests(self):
+        """Returns all entrys in request-table"""
+        qry = "SELECT * FROM requests"
+        return self.fetchAll(qry)
+
+    def getRequestsBy(self, key, value):
+        """Returns all entrys in request-table where key is like value"""
+        qry = 'SELECT * FROM requests WHERE (%s) LIKE ("%s")' % (key, value)
+        return self.fetchAll(qry)
+
 
 if __name__ == '__main__':
     db_connector = DB_Connector()
     db_connector.initialise()
     db_connector.addRequest("google.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
+    print(db_connector.getRequestsBy("ip", "localhost"))
