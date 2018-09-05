@@ -31,12 +31,14 @@ def captureDNS(_interface='mywlanmonitor'):
     capture = pyshark.LiveCapture(interface=_interface, bpf_filter='udp port 53')
     for packet in capture.sniff_continuously(packet_count=2):
         if 'DNS Layer' in str(packet.layers):
-            try:
-                print("Source: " + packet.ip.src)
-                print("Target: " + packet.ip.dst)
-            except AttributeError:
-                print("IP-informations are not available")
-            print(packet.dns)
+            if packet.dns.qry_name:
+                try:
+                    print("Source: " + packet.ip.src)
+                    print("Target: " + packet.ip.dst)
+                except AttributeError:
+                    print("IP-informations are not available")
+                print(packet.dns)
+
 
 
 interface = chooseInterface()
