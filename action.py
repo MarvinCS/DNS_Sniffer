@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class ACTION(Enum):
-    SCANN = 1,
+    SCAN = 1,
     EVALUATE = 2
 
 
@@ -13,7 +13,7 @@ def getAction():
     parser.add_argument('-e', '--evaluate', action="store_true", help="Evaluate the results of previous scans")
     args = parser.parse_args()
     if args.scan:
-        return ACTION.SCANN
+        return ACTION.SCAN
     elif args.evaluate:
         return ACTION.EVALUATE
     else:
