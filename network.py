@@ -1,7 +1,5 @@
 import os
-from time import sleep
 import pyshark
-from sympy import pretty_print
 from util import executeAndSleep
 from db import DB_Connector
 

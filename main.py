@@ -1,19 +1,14 @@
 from network import *
-import argparse
-
-
-def createParser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--scan', help="Use this option to start a new scan")
-    args = parser.parse_args()
-    return args
-
+import Action
 
 if __name__ == '__main__':
-    print(createParser())
-    '''
-    interface = chooseInterface()
-    startMonitorMode(interface)
-    captureDNS()
-    stopMonitorMode(interface)
-    '''
+    action = Action.getAction()
+    if action == Action.ACTION.SCANN:
+        interface = chooseInterface()
+        startMonitorMode(interface)
+        captureDNS()
+        stopMonitorMode(interface)
+    elif action == Action.ACTION.EVALUATE:
+        print("We must code the evaluation :D")
+    else:
+        print("What to do??")
