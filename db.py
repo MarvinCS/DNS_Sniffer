@@ -69,12 +69,12 @@ class DB_Connector:
     def getDomainId(self, name: str):
         """Returns domain-id of the given name"""
         qry = 'SELECT id FROM domains where name LIKE "%s"' % name
-        return self.fetch(qry)[0]
+        return self.fetch(qry)
 
     def getDomain(self, domain_id):
         """Returns the domain-name"""
         qry = "SELECT name FROM domains where id = %d" % domain_id
-        return self.fetch(qry)[0]
+        return self.fetch(qry)
 
     def getAllDomains(self):
         """Returns all entrys in domain-table"""
@@ -97,12 +97,12 @@ class DB_Connector:
     def getServerID(self, name: str):
         """Returns server-id of the given name"""
         qry = 'SELECT id FROM server where ip LIKE "%s"' % name
-        return self.fetch(qry)[0]
+        return self.fetch(qry)
 
     def getServer(self, server_id):
         """Returns the server-name"""
         qry = "SELECT ip FROM server where id = %d" % server_id
-        return self.fetch(qry)[0]
+        return self.fetch(qry)
 
     def getAllServer(self):
         """Returns all entrys in server-table"""
@@ -114,10 +114,10 @@ class DB_Connector:
     def addRequest(self, domain: str, dnsServer: str, ip="", mac=""):
         if not self.hasDomain(domain):
             self.addDomain(domain)
-        domain_id = self.getDomainId(domain)
+        domain_id = self.getDomainId(domain)[0]
         if not self.hasServer(dnsServer):
             self.addServer(dnsServer)
-        server_id = self.getServerID(dnsServer)
+        server_id = self.getServerID(dnsServer)[0]
         now = util.now()
         qry = 'INSERT INTO requests (ip, mac, domain_name, server, created_at, updated_at) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
             ip, mac, domain_id, server_id, now, now)
