@@ -69,12 +69,12 @@ class DB_Connector:
     def getDomainId(self, name: str):
         """Returns domain-id of the given name"""
         qry = 'SELECT id FROM domains where name LIKE "%s"' % name
-        return self.fetch(qry)
+        return self.fetch(qry)[0]
 
     def getDomain(self, domain_id):
         """Returns the domain-name"""
         qry = "SELECT name FROM domains where id = %d" % domain_id
-        return self.fetch(qry)
+        return self.fetch(qry)[0]
 
     def getAllDomains(self):
         """Returns all entrys in domain-table"""
@@ -97,12 +97,12 @@ class DB_Connector:
     def getServerID(self, name: str):
         """Returns server-id of the given name"""
         qry = 'SELECT id FROM server where ip LIKE "%s"' % name
-        return self.fetch(qry)
+        return self.fetch(qry)[0]
 
     def getServer(self, server_id):
         """Returns the server-name"""
         qry = "SELECT ip FROM server where id = %d" % server_id
-        return self.fetch(qry)
+        return self.fetch(qry)[0]
 
     def getAllServer(self):
         """Returns all entrys in server-table"""
@@ -134,9 +134,20 @@ class DB_Connector:
         qry = 'SELECT * FROM requests WHERE (%s) LIKE ("%s")' % (key, value)
         return self.fetchAll(qry)
 
+    def getTopTenDomains(self):
+        qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name'
+        result = self.fetchAll(qry)
+        return self.fetchAll(qry)[0:min(10, len(result))]
+
+    def getTopTenDNSServer(self):
+        qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip'
+        result = self.fetchAll(qry)
+        return self.fetchAll(qry)[0:min(10, len(result))]
+
 
 if __name__ == '__main__':
-    db_connector = DB_Connector()
-    db_connector.initialise()
-    db_connector.addRequest("google.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
-    print(db_connector.getRequestsBy("ip", "localhost"))
+    dbc = DB_Connector()
+    dbc.initialise()
+    dbc.addRequest("google2.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
+    print(dbc.getTopTenDomains())
+    print(dbc.getTopTenDNSServer())
