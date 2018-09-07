@@ -7,8 +7,7 @@ if __name__ == '__main__':
     Config.parse_config()
     action = getAction()
 
-    if action == ACTION.SCAN or action == ACTION.MONITOR:
-        # interface = chooseInterface()
+    if action == ACTION.SCAN or action == ACTION.INTERFACE:
         try:
             startMonitorMode()
             if action == ACTION.SCAN:
@@ -23,7 +22,8 @@ if __name__ == '__main__':
             exit(1)
     elif action == ACTION.EVALUATE:
         plotAllInOne()
-        # sleep(5)
-        # plotAllInOne(update=True)
-    else:
-        print("What to do??")
+        sleep(5)
+        plotAllInOne(update=True)
+    elif action == ACTION.MONITOR:
+        print(-1)
+        ## TODO Multithreading

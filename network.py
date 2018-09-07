@@ -64,10 +64,3 @@ def getSrcAndDst(pkt: packet):
 def getDomain(dns_string: str):
     domain = re.search('\'.*\'', dns_string).group(0)[1:-2]
     return tldextract.extract(domain).registered_domain
-
-
-if __name__ == '__main__':
-    interface = chooseInterface()
-    startMonitorMode(interface)
-    captureDNS()
-    stopMonitorMode(interface)

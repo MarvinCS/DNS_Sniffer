@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from db import DB_Connector
 
+f, axarr = plt.subplots(2, 2)
+
 
 def showTopTenDomains():
     """Creates a pie chart with the top ten domains"""
@@ -43,7 +45,7 @@ def plotAllInOne(update=False):
     sizes_dns_other.append(countOfRequests - sum(sizes_dns))
 
     # Now its time to visualise it
-    f, axarr = plt.subplots(2, 2)
+    # f, axarr = plt.subplots(2, 2)
     if not update:
         __createSubplot(axarr[0, 0], lables_domain, sizes_domain, "Top ten Domains")
         __createSubplot(axarr[1, 0], labels_domain_other, sizes_domain_other,
@@ -53,8 +55,11 @@ def plotAllInOne(update=False):
         plt.show()
     else:
         # TODO not workind at the moment
-        __updateSubplot(axarr[0, 0], [], [])
-        #plt.draw()
+        __updateSubplot(axarr[0, 0], ["a"], [1])
+        __updateSubplot(axarr[1, 0], ["b"], [2])
+        __updateSubplot(axarr[0, 1], ["c"], [3])
+        __updateSubplot(axarr[1, 1], ["d"], [4])
+        plt.show()
 
 
 def __createSubplot(ax, labels, sizes, title=""):
@@ -65,9 +70,8 @@ def __createSubplot(ax, labels, sizes, title=""):
 
 def __updateSubplot(ax, labels, sizes):
     """ Updates the given pie chart"""
-    ax.set_xdata(labels)
-    ax.set_ydata(sizes)
-    plt.draw()
+    ax.clear()
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
     # TODO not working at the moment
 
 
@@ -91,5 +95,6 @@ def __getTopTenDNSServer():
 
 
 if __name__ == '__main__':
-    showTopTenDomains()
-    showTopTopDNSServer()
+    #showTopTenDomains()
+    #showTopTopDNSServer()
+    plotAllInOne()

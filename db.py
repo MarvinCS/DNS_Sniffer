@@ -140,13 +140,11 @@ class DB_Connector:
     def getTopTenDomains(self):
         qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
         result = self.fetchAll(qry)
-        pretty_print(result)
         return result[0:min(10, len(result))]
 
     def getTopTenDNSServer(self):
         qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip ORDER BY COUNT(r.server) DESC'
         result = self.fetchAll(qry)
-        pretty_print(result)
         return result[0:min(10, len(result))]
 
     def requestCount(self):
