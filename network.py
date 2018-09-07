@@ -6,6 +6,7 @@ from scapy.layers.inet6 import IPv6
 from util import executeAndSleep
 from db import DB_Connector
 from logging import getLogger
+import tldextract
 
 '''
 You need root-permissions to execute this code
@@ -46,8 +47,7 @@ def filterPackage(pkt: packet):
             # Example dns_str: DNS Qry "b'id.google.com.'
             request = re.search('DNS Qry "b\'.*\'', dns_str)
             if request:
-                substring = request.group(0)
-                domain = re.search('\'.*\'', substring).group(0)[1:-2]
+                domain = getDomain(request.group(0))
                 src, dns_server = getSrcAndDst(pkt)
                 print(domain, src, dns_server)
                 dbc = DB_Connector.getInstance()
@@ -62,6 +62,11 @@ def getSrcAndDst(pkt: packet):
         return pkt[IP].src, pkt[IP].dst
     elif IPv6 in pkt:
         return pkt[IPv6].src, pkt[IPv6].dst
+
+
+def getDomain(dns_string: str):
+    domain = re.search('\'.*\'', dns_string).group(0)[1:-2]
+    return tldextract.extract(domain).registered_domain
 
 
 if __name__ == '__main__':

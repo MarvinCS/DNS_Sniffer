@@ -1,7 +1,7 @@
 from time import sleep
 
 from network import *
-from visualisation import showTopTopDNSServer, showTopTenDomains
+from visualisation import showTopTopDNSServer, showTopTenDomains, plotAllInOne
 from action import ACTION, getAction
 
 if __name__ == '__main__':
@@ -25,5 +25,8 @@ if __name__ == '__main__':
     elif action == ACTION.EVALUATE:
         showTopTenDomains()
         showTopTopDNSServer()
+        plotAllInOne()
+        #sleep(5)
+        #plotAllInOne(update=True)
     else:
         print("What to do??")

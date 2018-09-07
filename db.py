@@ -134,15 +134,26 @@ class DB_Connector:
         qry = 'SELECT * FROM requests WHERE (%s) LIKE ("%s")' % (key, value)
         return self.fetchAll(qry)
 
-    def getTopTenDomains(self):
-        qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name'
+    def getTopTenDomains(self, subdomains=True):
+        if subdomains:
+            qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name'
+        else:
+            qry = ''  ## TODO
         result = self.fetchAll(qry)
-        return self.fetchAll(qry)[0:min(10, len(result))]
+        return result[0:min(10, len(result))]
 
     def getTopTenDNSServer(self):
         qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip'
         result = self.fetchAll(qry)
-        return self.fetchAll(qry)[0:min(10, len(result))]
+        return result[0:min(10, len(result))]
+
+    def requestCount(self):
+        qry = 'SELECT COUNT(*) FROM requests'
+        return self.fetch(qry)[0]
+
+    def DNSCount(self):
+        qry = 'SELECT COUNT(*) FROM server'
+        return self.fetch(qry)[0]
 
 
 if __name__ == '__main__':
@@ -151,3 +162,4 @@ if __name__ == '__main__':
     dbc.addRequest("google2.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
     print(dbc.getTopTenDomains())
     print(dbc.getTopTenDNSServer())
+    print(dbc.requestCount())
