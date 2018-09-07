@@ -6,6 +6,7 @@ from scapy.layers.inet6 import IPv6
 from util import executeAndSleep
 from db import DB_Connector
 from logging import getLogger
+from config import Config
 import tldextract
 
 '''
@@ -13,26 +14,22 @@ You need root-permissions to execute this code
 '''
 
 
-def startMonitorMode(_interface='wlan1', channel=-1):
-    executeAndSleep('ifconfig ' + _interface + ' down')
-    executeAndSleep('iw dev ' + _interface + ' interface add mywlanmonitor type monitor')
+def startMonitorMode():
+    if Config.interface is None:
+        Config.chooseInterface()
+    executeAndSleep('ifconfig ' + Config.interface + ' down')
+    executeAndSleep('iw dev ' + Config.interface + ' interface add mywlanmonitor type monitor')
     executeAndSleep('ifconfig mywlanmonitor down')
     executeAndSleep('iw dev mywlanmonitor set type monitor')
     executeAndSleep('ifconfig mywlanmonitor up')
-    executeAndSleep(('iw dev mywlanmonitor set channel %s' % str(channel)))
+    executeAndSleep(('iw dev mywlanmonitor set channel %s' % str(Config.channel)))
 
 
-def stopMonitorMode(_interface='wlan1'):
+def stopMonitorMode():
     executeAndSleep('ifconfig mywlanmonitor down')
     executeAndSleep('iw dev mywlanmonitor del')
-    executeAndSleep('ifconfig ' + _interface + ' up')
+    executeAndSleep('ifconfig ' + Config.interface + ' up')
     executeAndSleep('service network-manager restart')
-
-
-def chooseInterface():
-    print('Available network-interfaces:')
-    os.system('ifconfig -a | sed \'s/[ \t].*//;/^\(lo\|\)$/d\'')
-    return input('\nWhich one do you want to use?\n')
 
 
 def captureDNS(_interface='mywlanmonitor'):

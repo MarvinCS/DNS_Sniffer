@@ -1,5 +1,8 @@
 import sqlite3
 import os
+
+from sympy import pretty_print
+
 import util
 
 
@@ -134,17 +137,16 @@ class DB_Connector:
         qry = 'SELECT * FROM requests WHERE (%s) LIKE ("%s")' % (key, value)
         return self.fetchAll(qry)
 
-    def getTopTenDomains(self, subdomains=True):
-        if subdomains:
-            qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name'
-        else:
-            qry = ''  ## TODO
+    def getTopTenDomains(self):
+        qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
         result = self.fetchAll(qry)
+        pretty_print(result)
         return result[0:min(10, len(result))]
 
     def getTopTenDNSServer(self):
-        qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip'
+        qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip ORDER BY COUNT(r.server) DESC'
         result = self.fetchAll(qry)
+        pretty_print(result)
         return result[0:min(10, len(result))]
 
     def requestCount(self):
