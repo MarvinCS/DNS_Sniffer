@@ -26,7 +26,7 @@ if __name__ == '__main__':
         showTopTenDomains()
         showTopTopDNSServer()
         plotAllInOne()
-        #sleep(5)
-        #plotAllInOne(update=True)
+        # sleep(5)
+        # plotAllInOne(update=True)
     else:
         print("What to do??")
