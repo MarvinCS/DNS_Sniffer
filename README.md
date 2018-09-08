@@ -2,9 +2,9 @@
 A pyshark based dns sniffing tool. Only works in public wifis
 
 ## Requirements
-1. Install Python3 and pip: `sudo apt install python3 python-pip`
-2. Make python3 default: [link](https://askubuntu.com/questions/320996/how-to-make-python-program-command-execute-python-3#answer-460578)
-2. Install Python libraries with pip: `sudo pip install scapy` 
+1. Install Python3 and pip: `sudo apt install python3 python3-pip python3-tk`
+2. Make python3 default ([link])(https://askubuntu.com/questions/320996/how-to-make-python-program-command-execute-python-3#answer-460578): `sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10` (Change /usr/bin/python3 to your destination)
+3. Install Python libraries with pip: `pip install scapy sympy tldextract matplotlib` 
 
 ## Installation
 - TODO!
