@@ -1,5 +1,5 @@
 from scapy.all import *
-from scapy.layers.dns import DNS, DNSStrField
+from scapy.layers.dns import DNS
 from scapy.layers.inet import IP
 from scapy.layers.inet6 import IPv6
 

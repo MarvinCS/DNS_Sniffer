@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 from db import DB_Connector
 
-f, axarr = plt.subplots(2, 2)
-
 
 def showTopTenDomains():
     """Creates a pie chart with the top ten domains"""
