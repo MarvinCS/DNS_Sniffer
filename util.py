@@ -1,6 +1,5 @@
 import os
 import time
-from enum import Enum
 
 
 def now():

@@ -1,8 +1,5 @@
 import sqlite3
 import os
-
-from sympy import pretty_print
-
 import util
 
 
