@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import util
+from config import Config
 
 
 class DB_Connector:
@@ -135,7 +136,11 @@ class DB_Connector:
         return self.fetchAll(qry)
 
     def getTopTenDomains(self):
-        qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
+        if len(Config.excluded_domains) is 0:
+            qry = 'SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
+        else:
+            filter = '(%s)' % ', '.join(['"' + str(i) + '"' for i in Config.excluded_domains])
+            qry = "SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id AND d.name NOT IN %s GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC" % filter
         result = self.fetchAll(qry)
         return result[0:min(10, len(result))]
 
@@ -145,7 +150,12 @@ class DB_Connector:
         return result[0:min(10, len(result))]
 
     def requestCount(self):
-        qry = 'SELECT COUNT(*) FROM requests'
+        if len(Config.excluded_domains) is 0:
+            qry = 'SELECT COUNT(*) FROM requests'
+        else:
+            _filter = '(%s)' % ', '.join(['"' + str(i) + '"' for i in Config.excluded_domains])
+            qry = 'SELECT COUNT(*) FROM requests WHERE domain_name NOT IN (SELECT id FROM domains WHERE name IN %s)' % _filter
+        print(self.fetch(qry)[0])
         return self.fetch(qry)[0]
 
     def DNSCount(self):
@@ -156,7 +166,4 @@ class DB_Connector:
 if __name__ == '__main__':
     dbc = DB_Connector()
     dbc.initialise()
-    dbc.addRequest("google2.com", "8.8.8.8", "localhost", "AA-BB-CC-DD-EE-FF")
-    print(dbc.getTopTenDomains())
-    print(dbc.getTopTenDNSServer())
     print(dbc.requestCount())

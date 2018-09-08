@@ -5,8 +5,8 @@ import os
 class Config:
     project_path = os.path.dirname(os.path.abspath(__file__))
     channel = None
-    update_interval = None
     interface = None
+    excluded_domains = []
 
     @staticmethod
     def parse_config(path_to_config=None):
@@ -15,9 +15,11 @@ class Config:
         with open(path_to_config) as f:
             data = json.load(f)
         Config.channel = data["channel"]
-        Config.update_interval = data["update_interval"]
         if data["interface"] is not None:
             Config.interface = data["interface"]
+        if data["excluded_domains"] is not None:
+            Config.excluded_domains = data["excluded_domains"]
+            print(Config.excluded_domains)
 
     @staticmethod
     def chooseInterface():

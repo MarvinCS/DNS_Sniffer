@@ -1,9 +1,8 @@
 {
   "channel": 6,
-  "update_interval": 5,
   "interface": null,
   "excluded_domains": [
-    "gstatic",
-    "facebook"
+    "google.com",
+    "facebook.net"
   ]
 }
