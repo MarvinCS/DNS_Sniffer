@@ -3,18 +3,8 @@ from network import *
 from visualisation import plotAllInOne
 from action import ACTION, getAction
 
-if __name__ == '__main__':
-    Config.parse_config()
-    action = getAction()
-    if action == ACTION.SCAN:
-        scann()
-    if action == ACTION.INTERFACE:
-        monitorMode()
-    elif action == ACTION.EVALUATE:
-        plotAllInOne()
 
-
-def scann():
+def scan():
     try:
         startMonitorMode()
         captureDNS()
@@ -25,7 +15,7 @@ def scann():
     exit(1)
 
 
-def interdaceToMonitorMode():
+def interfaceToMonitorMode():
     try:
         startMonitorMode()
         while True:
@@ -35,3 +25,14 @@ def interdaceToMonitorMode():
     finally:
         stopMonitorMode()
     exit(1)
+
+
+if __name__ == '__main__':
+    Config.parse_config()
+    action = getAction()
+    if action == ACTION.SCAN:
+        scan()
+    if action == ACTION.INTERFACE:
+        interfaceToMonitorMode()
+    elif action == ACTION.EVALUATE:
+        plotAllInOne()
