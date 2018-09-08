@@ -16,7 +16,7 @@ You need root-permissions to execute this code
 
 def startMonitorMode():
     if Config.interface is None:
-        Config.chooseInterface()
+        Config.interface = Config.chooseInterface()
     executeAndSleep('ifconfig ' + Config.interface + ' down')
     executeAndSleep('iw dev ' + Config.interface + ' interface add mywlanmonitor type monitor')
     executeAndSleep('ifconfig mywlanmonitor down')
