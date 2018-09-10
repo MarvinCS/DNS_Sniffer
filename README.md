@@ -1,5 +1,5 @@
 # DNS_Sniffer
-A pyshark based dns sniffing tool. Only works in public wifis
+A python3 based dns sniffing tool. Only works in public wifis
 
 ## Requirements
 1. `sudo apt install python3 python3-pip python3-tk python3-pyqt4 net-tools tshark`
