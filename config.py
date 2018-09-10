@@ -19,7 +19,6 @@ class Config:
             Config.interface = data["interface"]
         if data["excluded_domains"] is not None:
             Config.excluded_domains = data["excluded_domains"]
-            print(Config.excluded_domains)
 
     @staticmethod
     def chooseInterface():

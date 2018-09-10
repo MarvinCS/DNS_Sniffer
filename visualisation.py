@@ -71,9 +71,9 @@ def __getTopTenDomains():
 def __getTopTenDNSServer():
     dbc = DB_Connector.getInstance()
     labels, sizes = [], []
-    for domain in dbc.getTopTenDNSServer():
-        labels.append(domain[0])
-        sizes.append(domain[1])
+    for server in dbc.getTopTenDNSServer():
+        labels.append(server[0])
+        sizes.append(server[1])
     return labels, sizes
 
 
