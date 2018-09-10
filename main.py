@@ -1,9 +1,8 @@
 from time import sleep
 
-from PyQt5.QtWidgets import QApplication, QDialog
-
+from PyQt5 import QtWidgets
 from network import *
-from qt import Ui_Dialog
+from qt.main_window import Ui_MainWindow
 from visualisation import plotAllInOne
 from action import ACTION, getAction
 
@@ -30,6 +29,16 @@ def interfaceToMonitorMode():
         stopMonitorMode()
     exit(1)
 
+def gui():
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    ui.init_buttons()
+    ui.init_tables()
+    MainWindow.show()
+    sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     Config.parse_config()
@@ -41,11 +50,4 @@ if __name__ == '__main__':
     elif action == ACTION.EVALUATE:
         plotAllInOne()
     elif action == ACTION.GUI:
-        app = QApplication(sys.argv)
-        Dialog = QDialog()
-        ui = Ui_Dialog()
-        ui.setupUi(Dialog)
-        ui.init_buttons()
-        ui.init_tables()
-        Dialog.show()
-        sys.exit(app.exec_())
+        gui()
