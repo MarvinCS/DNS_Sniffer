@@ -13,3 +13,7 @@ A python3 based dns sniffing tool. Only works in public wifis
 1. Run *main.py* to evaluate your results
 
 
+## TODO
+- gui options: 
+  - subdomain radio button
+  - db name 
