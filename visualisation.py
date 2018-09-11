@@ -1,5 +1,7 @@
+import threading
+
 import matplotlib.pyplot as plt
-from db import DB_Connector
+from db import DB_Connector, Connection_handler
 
 
 def showTopTenDomains():
@@ -24,7 +26,7 @@ def __show(labels, sizes):
 
 def plotAllInOne():
     # Count of all requests in the Database
-    countOfRequests = DB_Connector.getInstance().requestCount()
+    countOfRequests = Connection_handler.getConnection().requestCount()
 
     # Get names and counts of the top ten domains
     lables_domain, sizes_domain = __getTopTenDomains()
@@ -60,7 +62,7 @@ def __createSubplot(ax, labels, sizes, title=""):
 
 def __getTopTenDomains():
     """Returns two lists with the names and counts of the top ten domains"""
-    dbc = DB_Connector.getInstance()
+    dbc = Connection_handler.getConnection()
     labels, sizes = [], []
     for domain in dbc.getTopTenDomains():
         labels.append(domain[0])
@@ -69,7 +71,7 @@ def __getTopTenDomains():
 
 
 def __getTopTenDNSServer():
-    dbc = DB_Connector.getInstance()
+    dbc = Connection_handler.getConnection()
     labels, sizes = [], []
     for server in dbc.getTopTenDNSServer():
         labels.append(server[0])

@@ -5,8 +5,7 @@ from scapy.layers.inet import IP
 from scapy.layers.inet6 import IPv6
 
 from util import executeAndSleep, myprint
-from db import DB_Connector
-from logging import getLogger
+from db import Connection_handler
 from config import Config
 import tldextract
 
@@ -48,16 +47,16 @@ def filterPackage(pkt: packet):
                 if request:
                     domain = re.search('\'.*\'', request.group(0)).group(0)[1:-2]
                     src, dns_server = getSrcAndDst(pkt)
-                    log_string = "Domain: %s, src: %s, dns-server: %s" % (domain, src, dns_server)
-                    myprint(log_string)
-                    dbc = DB_Connector.getInstance()
+                    myprint("Domain: %s, src: %s, dns-server: %s" % (domain, src, dns_server))
+                    dbc = Connection_handler.getConnection()
                     dbc.addRequest(domain, dns_server, ip=src)
         except Exception:
-            logger = getLogger("test")
-            logger.exception("Fatal error in main loop")
+            pass
     else:
+        if Config._log_window is not None:
+            Config._log_window.lv_log.addItem("Stopping...")
+        Connection_handler.remomveConnection()
         exit(0)
-
 
 
 def getSrcAndDst(pkt: packet):

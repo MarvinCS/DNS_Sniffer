@@ -1,28 +1,19 @@
 import sqlite3
 import os
+import threading
+from logging import getLogger
+
 import util
 from config import Config
 
 
 class DB_Connector:
-    __instance = None
-
-    @staticmethod
-    def getInstance(db_name="dns.db"):
-        """ Static access method """
-        if DB_Connector.__instance is None:
-            _db_name = db_name if Config.db_name is None else Config.db_name
-            DB_Connector(_db_name)
-        return DB_Connector.__instance
 
     def __init__(self, db_name="dns.db"):
         """Constructor"""
-        if DB_Connector.__instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            DB_Connector.__instance = self
-            self.connection = sqlite3.connect(db_name)
-            self.initialise()
+        DB_Connector.__instance = self
+        self.connection = sqlite3.connect(db_name)
+        self.initialise()
 
     def initialise(self):
         """Initialises the tables of the database"""
@@ -114,17 +105,21 @@ class DB_Connector:
     ### Start of request section ###
 
     def addRequest(self, domain: str, dnsServer: str, ip="", mac=""):
-        if not self.hasDomain(domain):
-            self.addDomain(domain)
-        domain_id = self.getDomainId(domain)[0]
-        if not self.hasServer(dnsServer):
-            self.addServer(dnsServer)
-        server_id = self.getServerID(dnsServer)[0]
-        now = util.now()
-        qry = 'INSERT INTO requests (ip, mac, domain_name, server, created_at, updated_at) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
-            ip, mac, domain_id, server_id, now, now)
-        self.execute_query(qry)
-        self.connection.commit()
+        try:
+            if not self.hasDomain(domain):
+                self.addDomain(domain)
+            domain_id = self.getDomainId(domain)[0]
+            if not self.hasServer(dnsServer):
+                self.addServer(dnsServer)
+            server_id = self.getServerID(dnsServer)[0]
+            now = util.now()
+            qry = 'INSERT INTO requests (ip, mac, domain_name, server, created_at, updated_at) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
+                ip, mac, domain_id, server_id, now, now)
+            self.execute_query(qry)
+            self.connection.commit()
+        except Exception:
+            logger = getLogger("sql")
+            logger.exception("Fatal error in main loop")
 
     def getAllRequests(self):
         """Returns all entrys in request-table"""
@@ -167,6 +162,24 @@ class DB_Connector:
     def DNSCount(self):
         qry = 'SELECT COUNT(*) FROM server'
         return self.fetch(qry)[0]
+
+
+class Connection_handler:
+    connections = {}
+
+    @staticmethod
+    def getConnection() -> DB_Connector:
+        thread_name = threading.currentThread().getName()
+        if thread_name not in Connection_handler.connections:
+            Connection_handler.connections[thread_name] = DB_Connector(Config.db_name)
+            if len(Connection_handler.connections) == 1:
+                Connection_handler.connections[thread_name].initialise()
+        return Connection_handler.connections[thread_name]
+
+    @staticmethod
+    def remomveConnection():
+        thread_name = threading.currentThread().getName()
+        del Connection_handler.connections[thread_name]
 
 
 if __name__ == '__main__':

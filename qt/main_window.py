@@ -98,6 +98,13 @@ class Ui_MainWindow(object):
         self.btn_options.setText(_translate("MainWindow", "Options"))
         self.btn_evaluate.setText(_translate("MainWindow", "Evaluate"))
 
+    def init(self, MainWindow):
+        """Init all"""
+        self.setupUi(MainWindow)
+        self.init_buttons()
+        self.init_tables()
+        Config._log_window = self.lv_log
+
     def init_buttons(self):
         """Init Buttons"""
         self.btn_start.clicked.connect(self.on_click_start)
@@ -117,20 +124,31 @@ class Ui_MainWindow(object):
     def on_click_start(self):
         if Config.interface is None:
             self.lv_log.addItem("Please press the \"Option\"-button and set an interface")
-            return
         if self.btn_start.text() == "Start":
             self.btn_start.setText("Stop")
-            self.lv_log.addItem("Starting...")
-            startMonitorMode()
-            self.scanning_thread = threading.Thread(target=captureDNS, daemon=True, name="scanning-thread")
+            self.scanning_thread = threading.Thread(target=self.__scan, daemon=True, name="scanning-thread")
             self.scanning_thread.start()
+            if Config.update_interval is not None:
+                self.auto_update_thread = threading.Thread(target=self.__auto_update, daemon=True,
+                                                           name="update_thread")
+                self.auto_update_thread.start()
         elif self.btn_start.text() == "Stop":
-            self.lv_log.addItem("Stopping...")
             self.btn_start.setText("Start")
             stopMonitorMode()
 
+    def __scan(self):
+        self.lv_log.addItem("Starting...")
+        startMonitorMode()
+        captureDNS()
+
+    def __auto_update(self):
+        while self.scanning_thread.is_alive():
+            self.on_click_refresh()
+            time.sleep(int(Config.update_interval))
+        Connection_handler.remomveConnection()
+
     def on_click_refresh(self):
-        dbc = DB_Connector.getInstance()
+        dbc = Connection_handler.getConnection()
         domains = dbc.getDomains()
         self.tv_domains.setRowCount(len(domains))
         counter = 0
@@ -157,10 +175,6 @@ class Ui_MainWindow(object):
 
     def on_click_evaluate(self):
         plotAllInOne()
-
-    def auto_update(self):
-        self.on_click_refresh()
-        time.sleep(Config.update_interval)
 
 
 if __name__ == "__main__":

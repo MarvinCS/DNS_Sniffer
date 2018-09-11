@@ -1,6 +1,5 @@
 from time import sleep
 
-from PyQt5 import QtWidgets
 from network import *
 from qt.main_window import Ui_MainWindow
 from visualisation import plotAllInOne
@@ -34,10 +33,7 @@ def gui():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    ui.init_buttons()
-    ui.init_tables()
-    Config._log_window = ui.lv_log
+    ui.init(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
 
