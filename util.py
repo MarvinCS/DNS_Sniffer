@@ -15,7 +15,7 @@ def executeAndSleep(command: str, _time=1):
     time.sleep(_time)
 
 
-def myprint(string: str, list_widget: QtWidgets.QListWidget = None):
+def myprint(string: str):
     if len(string) is not 0:
         if Config._log_window is None:
             print(string)

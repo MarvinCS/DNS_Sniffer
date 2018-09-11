@@ -6,8 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QListWidgetItem
+from PyQt5 import QtCore, QtWidgets
 from config import Config
 from qt.add_domain import Add_domain
 from qt.interface_chooser import Choose_interface_dialog

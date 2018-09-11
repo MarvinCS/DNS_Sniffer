@@ -33,7 +33,7 @@ def stopMonitorMode():
 
 
 def captureDNS(_interface='mywlanmonitor', list_widget: QtWidgets.QListWidget = None):
-    myprint("Starting the scan:", list_widget)
+    myprint("Starting the scan:")
     sniff(iface=_interface, prn=filterPackage, filter="udp port 53", store=0)
 
 

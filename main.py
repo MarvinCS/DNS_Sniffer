@@ -1,5 +1,4 @@
 from time import sleep
-
 from network import *
 from qt.main_window import Ui_MainWindow
 from visualisation import plotAllInOne

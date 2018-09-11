@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 import os
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 from config import Config
 

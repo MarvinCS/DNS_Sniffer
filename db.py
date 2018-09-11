@@ -2,7 +2,6 @@ import sqlite3
 import os
 import threading
 from logging import getLogger
-
 import util
 from config import Config
 
@@ -11,7 +10,12 @@ class DB_Connector:
 
     def __init__(self, db_name="dns.db"):
         """Constructor"""
-        DB_Connector.__instance = self
+        thread_name = threading.currentThread().getName()
+        if thread_name in Connection_handler.connections:
+            raise Exception(
+                "This class is a singleton! Use Connection_handler.get_instance() to get an instance of DB_Connector")
+        else:
+            Connection_handler.connections[thread_name] = self
         self.connection = sqlite3.connect(db_name)
         self.initialise()
 

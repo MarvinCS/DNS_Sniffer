@@ -1,7 +1,5 @@
-import threading
-
 import matplotlib.pyplot as plt
-from db import DB_Connector, Connection_handler
+from db import Connection_handler
 
 
 def showTopTenDomains():
