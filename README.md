@@ -15,5 +15,5 @@ A python3 based dns sniffing tool. Only works in public wifis
 
 ## TODO
 - gui options: 
-  -subdomain radio button
+  - subdomain radio button
   - db name 
