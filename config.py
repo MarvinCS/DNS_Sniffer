@@ -8,6 +8,8 @@ class Config:
     channel = None
     interface = None
     excluded_domains = []
+    _log_window = None
+    _scanning_thread = True
 
     @staticmethod
     def parse_config(path_to_config=None):

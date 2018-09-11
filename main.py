@@ -37,6 +37,7 @@ def gui():
     ui.setupUi(MainWindow)
     ui.init_buttons()
     ui.init_tables()
+    Config._log_window = ui.lv_log
     MainWindow.show()
     sys.exit(app.exec_())
 
