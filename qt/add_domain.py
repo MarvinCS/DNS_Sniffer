@@ -42,6 +42,8 @@ class Add_domain(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.ti_domain_name, self.btn_save)
+        Dialog.setTabOrder(self.btn_save, self.btn_cancel)
         self.dialog = Dialog
 
     def retranslateUi(self, Dialog):

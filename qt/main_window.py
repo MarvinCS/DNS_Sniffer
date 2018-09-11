@@ -120,11 +120,11 @@ class Ui_MainWindow(object):
             return
         if self.btn_start.text() == "Start":
             self.btn_start.setText("Stop")
-            startMonitorMode()
-            captureDNS()
+            startMonitorMode(self.lv_log)
+            captureDNS(self.lv_log)
         elif self.btn_start.text() == "Stop":
             self.btn_start.setText("Start")
-            stopMonitorMode()
+            stopMonitorMode(self.lv_log)
 
     def on_click_refresh(self):
         dbc = DB_Connector.getInstance()
@@ -155,6 +155,9 @@ class Ui_MainWindow(object):
     def on_click_evaluate(self):
         plotAllInOne()
 
+    def auto_update(self):
+        self.on_click_refresh()
+        time.sleep(Config.update_interval)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

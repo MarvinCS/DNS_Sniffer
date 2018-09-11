@@ -1,1 +1,1 @@
-{"db_name": "dns.db", "update_interval": null, "channel": "1", "interface": "wlp5s0", "excluded_domains": ["google.com", "test.com", "example.com"]}
+{"db_name": "dns.db", "channel": "1", "interface": "wlp5s0", "excluded_domains": ["google.com"]}

@@ -58,6 +58,11 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>ti_domain_name</tabstop>
+  <tabstop>btn_save</tabstop>
+  <tabstop>btn_cancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

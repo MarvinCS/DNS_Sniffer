@@ -24,7 +24,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QListWidget" name="listWidget"/>
+     <widget class="QListWidget" name="lv_interfaces"/>
     </item>
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">
@@ -48,8 +48,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>199</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -64,8 +64,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>199</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
