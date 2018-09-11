@@ -50,4 +50,5 @@ if __name__ == '__main__':
     elif action == ACTION.EVALUATE:
         plotAllInOne()
     elif action == ACTION.GUI:
+        print(Config.db_name)
         gui()

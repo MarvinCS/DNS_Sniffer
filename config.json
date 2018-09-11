@@ -1,5 +1,6 @@
 {
-  "channel": 6,
+  "db_name": "starbucks.db",
+  "channel": 1,
   "interface": "wlp5s0",
   "update_interval": null,
   "excluded_domains": [

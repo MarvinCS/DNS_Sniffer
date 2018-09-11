@@ -3,6 +3,7 @@ import os
 
 
 class Config:
+    db_name = "dns.db"
     update_interval = None
     project_path = os.path.dirname(os.path.abspath(__file__))
     channel = None
@@ -21,6 +22,9 @@ class Config:
         if data["excluded_domains"] is not None:
             Config.excluded_domains = data["excluded_domains"]
         Config.update_interval = data["update_interval"]
+        if data["db_name"] is not None:
+            Config.db_name = data["db_name"]
+
 
     @staticmethod
     def chooseInterface():

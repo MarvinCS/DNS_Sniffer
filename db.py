@@ -11,16 +11,18 @@ class DB_Connector:
     def getInstance(db_name="dns.db"):
         """ Static access method """
         if DB_Connector.__instance is None:
-            DB_Connector(db_name)
+            _db_name = db_name if Config.db_name is None else Config.db_name
+            DB_Connector(_db_name)
         return DB_Connector.__instance
 
     def __init__(self, db_name="dns.db"):
+        _db_name = db_name if Config.db_name is None else Config.db_name
         """Constructor"""
         if DB_Connector.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             DB_Connector.__instance = self
-            self.connection = sqlite3.connect(db_name)
+            self.connection = sqlite3.connect(_db_name)
             self.initialise()
 
     def initialise(self):
