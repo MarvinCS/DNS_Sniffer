@@ -1,6 +1,7 @@
 {
   "channel": 6,
-  "interface": null,
+  "interface": "wlp5s0",
+  "update_interval": null,
   "excluded_domains": [
     "google.com",
     "facebook.net"

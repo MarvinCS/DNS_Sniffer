@@ -3,6 +3,7 @@ import os
 
 
 class Config:
+    update_interval = None
     project_path = os.path.dirname(os.path.abspath(__file__))
     channel = None
     interface = None
@@ -19,6 +20,7 @@ class Config:
             Config.interface = data["interface"]
         if data["excluded_domains"] is not None:
             Config.excluded_domains = data["excluded_domains"]
+        Config.update_interval = data["update_interval"]
 
     @staticmethod
     def chooseInterface():

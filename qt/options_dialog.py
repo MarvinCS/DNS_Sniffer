@@ -8,14 +8,17 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Dialog(object):
+from config import Config
+
+
+class Options_dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(480, 368)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(10, 330, 461, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayoutWidget = QtWidgets.QWidget(Dialog)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 461, 111))
@@ -64,7 +67,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.lv_domains = QtWidgets.QListView(self.horizontalLayoutWidget_3)
+        self.lv_domains = QtWidgets.QListWidget(self.horizontalLayoutWidget_3)
         self.lv_domains.setObjectName("lv_domains")
         self.horizontalLayout_3.addWidget(self.lv_domains)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
@@ -98,12 +101,24 @@ class Ui_Dialog(object):
         self.btn_add_domain.setText(_translate("Dialog", "Add"))
         self.btn_remove_domain.setText(_translate("Dialog", "Remove"))
 
+    def insert_data(self):
+        if Config.channel is not None:
+            self.ti_channel.setText(str(Config.channel))
+        if Config.interface is not None:
+            self.ti_interface.setText(str(Config.interface))
+        if Config.update_interval is not None:
+            self.ti_update_interval.setText(str(Config.update_interval))
+        for domain in Config.excluded_domains:
+            self.lv_domains.addItem(str(domain))
+
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Options_dialog()
     ui.setupUi(Dialog)
+    ui.insert_data()
     Dialog.show()
     sys.exit(app.exec_())

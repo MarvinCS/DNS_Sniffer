@@ -9,6 +9,7 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableWidgetItem
 from network import *
+from qt.options_dialog import Options_dialog
 from visualisation import plotAllInOne
 
 
@@ -142,7 +143,11 @@ class Ui_MainWindow(object):
             counter += 1
 
     def on_click_options(self):
-        print(-1)
+        self.dialog = QtWidgets.QDialog()
+        self.ui = Options_dialog()
+        self.ui.setupUi(self.dialog)
+        self.ui.insert_data()
+        self.dialog.show()
 
     def on_click_evaluate(self):
         plotAllInOne()
