@@ -8,7 +8,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Dialog(object):
+from config import Config
+
+
+class Add_domain(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(331, 111)
@@ -39,6 +42,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.dialog = Dialog
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -47,13 +51,24 @@ class Ui_Dialog(object):
         self.btn_cancel.setText(_translate("Dialog", "Cancel"))
         self.btn_save.setText(_translate("Dialog", "Save"))
 
+    def init_buttons(self, dialog):
+        self.old_dialog = dialog
+        self.btn_cancel.clicked.connect(self.dialog.reject)
+        self.btn_save.clicked.connect(self.__save)
+
+    def __save(self):
+        domain = str(self.ti_domain_name.text()).strip()
+        Config.excluded_domains.append(domain)
+        self.dialog.accept()
+        self.old_dialog.load_domains()
+
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Add_domain()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

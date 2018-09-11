@@ -7,27 +7,31 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QListWidgetItem
 from config import Config
+from qt.add_domain import Add_domain
 
 
 class Options_dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(480, 368)
+        Dialog.resize(480, 385)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
-        self.buttonBox.setGeometry(QtCore.QRect(10, 330, 461, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(10, 350, 461, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayoutWidget = QtWidgets.QWidget(Dialog)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 461, 111))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 461, 133))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.lbl_database = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        self.lbl_database.setObjectName("lbl_database")
+        self.verticalLayout.addWidget(self.lbl_database)
         self.lbl_channel = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.lbl_channel.setObjectName("lbl_channel")
         self.verticalLayout.addWidget(self.lbl_channel)
@@ -40,6 +44,9 @@ class Options_dialog(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.ti_db_name = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
+        self.ti_db_name.setObjectName("ti_db_name")
+        self.verticalLayout_2.addWidget(self.ti_db_name)
         self.ti_channel = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.ti_channel.setObjectName("ti_channel")
         self.verticalLayout_2.addWidget(self.ti_channel)
@@ -57,12 +64,12 @@ class Options_dialog(object):
         self.verticalLayout_2.addWidget(self.ti_update_interval)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.line = QtWidgets.QFrame(Dialog)
-        self.line.setGeometry(QtCore.QRect(10, 120, 461, 16))
+        self.line.setGeometry(QtCore.QRect(10, 145, 461, 16))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(Dialog)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(10, 140, 461, 181))
+        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(10, 160, 461, 181))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -81,7 +88,6 @@ class Options_dialog(object):
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
 
         self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.ti_channel, self.ti_interface)
@@ -90,10 +96,12 @@ class Options_dialog(object):
         Dialog.setTabOrder(self.ti_update_interval, self.lv_domains)
         Dialog.setTabOrder(self.lv_domains, self.btn_add_domain)
         Dialog.setTabOrder(self.btn_add_domain, self.btn_remove_domain)
+        self.save_dialog = Dialog
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.lbl_database.setText(_translate("Dialog", "Database"))
         self.lbl_channel.setText(_translate("Dialog", "Channel:"))
         self.lbl_interface.setText(_translate("Dialog", "Interface:"))
         self.lbl_update_interval.setText(_translate("Dialog", "Auto-Update:"))
@@ -101,15 +109,51 @@ class Options_dialog(object):
         self.btn_add_domain.setText(_translate("Dialog", "Add"))
         self.btn_remove_domain.setText(_translate("Dialog", "Remove"))
 
+    def __save(self):
+        channel = self.ti_channel.text()
+        interface = str(self.ti_interface.text())
+        update_interval = self.ti_update_interval.text()
+        db_name = str(self.ti_db_name.text())
+        Config.channel = channel if len(str(channel)) is not 0 else None
+        Config.interface = interface if len(interface) is not 0 else None
+        Config.update_interval = update_interval if len(str(update_interval)) is not 0 else None
+        Config.db_name = db_name if len(str(db_name)) is not 0 else None
+        Config.save()
+        self.save_dialog.accept()
+
+    def __add_domain(self):
+        self.dialog = QtWidgets.QDialog()
+        self.ui = Add_domain()
+        self.ui.setupUi(self.dialog)
+        self.ui.init_buttons(self)
+        self.dialog.show()
+
+    def __remove_domain(self):
+        selected = self.lv_domains.selectedItems()
+        for domain in selected:
+            Config.excluded_domains.remove(str(domain.text()))
+        self.load_domains()
+
     def insert_data(self):
+        if Config.db_name is not None:
+            self.ti_db_name.setText(str(Config.db_name))
         if Config.channel is not None:
             self.ti_channel.setText(str(Config.channel))
         if Config.interface is not None:
             self.ti_interface.setText(str(Config.interface))
         if Config.update_interval is not None:
             self.ti_update_interval.setText(str(Config.update_interval))
+        self.load_domains()
+
+    def load_domains(self):
+        self.lv_domains.clear()
         for domain in Config.excluded_domains:
             self.lv_domains.addItem(str(domain))
+
+    def init__buttons(self):
+        self.buttonBox.accepted.connect(self.__save)
+        self.btn_add_domain.clicked.connect(self.__add_domain)
+        self.btn_remove_domain.clicked.connect(self.__remove_domain)
 
 
 if __name__ == "__main__":

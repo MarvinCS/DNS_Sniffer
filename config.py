@@ -25,9 +25,16 @@ class Config:
         if data["db_name"] is not None:
             Config.db_name = data["db_name"]
 
-
     @staticmethod
     def chooseInterface():
         print('Available network-interfaces:')
         os.system('ifconfig -a | sed \'s/[ \t].*//;/^\(lo\|\)$/d\'')
         return input('\nWhich one do you want to use?\n')
+
+    @staticmethod
+    def save():
+        data = {"db_name": Config.db_name, "update_interval": Config.update_interval, "channel": Config.channel,
+                "interface": Config.interface, "excluded_domains": Config.excluded_domains}
+        path_to_config = Config.project_path + "/config.json"
+        with open(path_to_config, 'w') as outfile:
+            json.dump(data, outfile)

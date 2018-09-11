@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>368</height>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>330</y>
+     <y>350</y>
      <width>461</width>
      <height>32</height>
     </rect>
@@ -35,12 +35,19 @@
      <x>10</x>
      <y>10</y>
      <width>461</width>
-     <height>111</height>
+     <height>133</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="lbl_database">
+        <property name="text">
+         <string>Database</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="lbl_channel">
         <property name="text">
@@ -66,6 +73,9 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLineEdit" name="ti_db_name"/>
+      </item>
       <item>
        <widget class="QLineEdit" name="ti_channel"/>
       </item>
@@ -94,7 +104,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>120</y>
+     <y>145</y>
      <width>461</width>
      <height>16</height>
     </rect>
@@ -107,14 +117,14 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>140</y>
+     <y>160</y>
      <width>461</width>
      <height>181</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <widget class="QListView" name="lv_domains"/>
+     <widget class="QListWidget" name="lv_domains"/>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4">

@@ -138,7 +138,7 @@ class DB_Connector:
 
     def getDomains(self, count=False):
         if len(Config.excluded_domains) is 0:
-            qry = 'SELECT dexcluded_domains.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
+            qry = 'SELECT excluded_domains.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
         else:
             filter = '(%s)' % ', '.join(['"' + str(i) + '"' for i in Config.excluded_domains])
             qry = "SELECT d.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id AND d.name NOT IN %s GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC" % filter

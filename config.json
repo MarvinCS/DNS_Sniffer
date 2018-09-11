@@ -1,9 +1,1 @@
-{
-  "db_name": "starbucks.db",
-  "channel": 1,
-  "interface": "wlp5s0",
-  "update_interval": null,
-  "excluded_domains": [
-    "pferdedildos.com"
-  ]
-}
+{"db_name": "dns.db", "update_interval": null, "channel": "1", "interface": "wlp5s0", "excluded_domains": ["google.com", "test.com", "example.com"]}

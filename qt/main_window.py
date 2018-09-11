@@ -99,12 +99,14 @@ class Ui_MainWindow(object):
         self.btn_evaluate.setText(_translate("MainWindow", "Evaluate"))
 
     def init_buttons(self):
+        """Init Buttons"""
         self.btn_start.clicked.connect(self.on_click_start)
         self.btn_refresh.clicked.connect(self.on_click_refresh)
         self.btn_options.clicked.connect(self.on_click_options)
         self.btn_evaluate.clicked.connect(self.on_click_evaluate)
 
     def init_tables(self):
+        """Init Tables"""
         self.tv_domains.setRowCount(0)
         self.tv_domains.setColumnCount(2)
         self.tv_domains.setHorizontalHeaderLabels(["domain", "count"])
@@ -146,6 +148,7 @@ class Ui_MainWindow(object):
         self.dialog = QtWidgets.QDialog()
         self.ui = Options_dialog()
         self.ui.setupUi(self.dialog)
+        self.ui.init__buttons()
         self.ui.insert_data()
         self.dialog.show()
 
