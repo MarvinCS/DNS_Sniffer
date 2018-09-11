@@ -39,12 +39,13 @@ def captureDNS(_interface='mywlanmonitor'):
 
 def filterPackage(pkt: packet):
     try:
+        print(pkt.summary())
         if DNS in pkt:
             dns_str = str(pkt[DNS].summary())
             # Example dns_str: DNS Qry "b'id.google.com.'
             request = re.search('DNS Qry "b\'.*\'', dns_str)
             if request:
-                domain = getDomain(request.group(0))
+                domain = re.search('\'.*\'', request.group(0)).group(0)[1:-2]
                 src, dns_server = getSrcAndDst(pkt)
                 print(domain, src, dns_server)
                 dbc = DB_Connector.getInstance()
