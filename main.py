@@ -29,6 +29,7 @@ def interfaceToMonitorMode():
         stopMonitorMode()
     exit(1)
 
+
 def gui():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
