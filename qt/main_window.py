@@ -5,6 +5,7 @@
 # Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
+import threading
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidgetItem
@@ -124,17 +125,18 @@ class Ui_MainWindow(object):
     def on_click_start(self):
         if Config.interface is None:
             self.lv_log.addItem("Please press the \"Option\"-button and set an interface")
-        if self.btn_start.text() == "Start":
-            self.btn_start.setText("Stop")
-            self.scanning_thread = threading.Thread(target=self.__scan, daemon=True, name="scanning-thread")
-            self.scanning_thread.start()
-            if Config.update_interval is not None:
-                self.auto_update_thread = threading.Thread(target=self.__auto_update, daemon=True,
-                                                           name="update_thread")
-                self.auto_update_thread.start()
-        elif self.btn_start.text() == "Stop":
-            self.btn_start.setText("Start")
-            stopMonitorMode()
+        else:
+            if self.btn_start.text() == "Start":
+                self.btn_start.setText("Stop")
+                self.scanning_thread = threading.Thread(target=self.__scan, daemon=True, name="scanning-thread")
+                self.scanning_thread.start()
+                if Config.update_interval is not None:
+                    self.auto_update_thread = threading.Thread(target=self.__auto_update, daemon=True,
+                                                               name="update_thread")
+                    self.auto_update_thread.start()
+            elif self.btn_start.text() == "Stop":
+                self.btn_start.setText("Start")
+                stopMonitorMode()
 
     def __scan(self):
         self.lv_log.addItem("Starting...")
