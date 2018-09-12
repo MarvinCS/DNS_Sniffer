@@ -1,34 +1,41 @@
+import sys
 from time import sleep
-from network import *
+from PyQt5 import QtWidgets
+
+from config import Config
 from qt.main_window import Ui_MainWindow
-from visualisation import plotAllInOne
+from visualisation import Pie_Chart
 from action import ACTION, getAction
+from network import Network
 
 
 def scan():
+    """Starts scanning for dns-packages"""
     try:
-        startMonitorMode()
-        captureDNS()
+        Network.startMonitorMode()
+        Network.captureDNS()
     except KeyboardInterrupt:
         print("Abort...")
     finally:
-        stopMonitorMode()
+        Network.stopMonitorMode()
     exit(1)
 
 
 def interfaceToMonitorMode():
+    """Set interface to monitor-mode"""
     try:
-        startMonitorMode()
+        Network.startMonitorMode()
         while True:
             sleep(1)
     except KeyboardInterrupt:
         print("Abort...")
     finally:
-        stopMonitorMode()
+        Network.stopMonitorMode()
     exit(1)
 
 
 def gui():
+    """Creats the gui's main-window"""
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
@@ -45,7 +52,7 @@ if __name__ == '__main__':
     elif action == ACTION.INTERFACE:
         interfaceToMonitorMode()
     elif action == ACTION.EVALUATE:
-        plotAllInOne()
+        Pie_Chart.plotAllInOne()
     elif action == ACTION.GUI:
         print(Config.db_name)
         gui()

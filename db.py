@@ -9,7 +9,7 @@ from config import Config
 class DB_Connector:
 
     def __init__(self, db_name="dns.db"):
-        """Constructor"""
+        """Constructor (Should not be called. Use Connection_handler.get_instance()!!)"""
         thread_name = threading.currentThread().getName()
         if thread_name in Connection_handler.connections:
             raise Exception(
@@ -109,13 +109,19 @@ class DB_Connector:
     ### Start of request section ###
 
     def addRequest(self, domain: str, dnsServer: str, ip="", mac=""):
+        """Adds an request to the database. Creates the domain- and/or dns-entry if necessary"""
         try:
+            # First: check for the domain
             if not self.hasDomain(domain):
                 self.addDomain(domain)
             domain_id = self.getDomainId(domain)[0]
+
+            # Second: check for the server
             if not self.hasServer(dnsServer):
                 self.addServer(dnsServer)
             server_id = self.getServerID(dnsServer)[0]
+
+            # Third: Insert request
             now = util.now()
             qry = 'INSERT INTO requests (ip, mac, domain_name, server, created_at, updated_at) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
                 ip, mac, domain_id, server_id, now, now)
@@ -136,6 +142,7 @@ class DB_Connector:
         return self.fetchAll(qry)
 
     def getDomains(self, count=False):
+        """Get domains and their count. Return the given count of entrys, if count is not False. If there are excluded domains in Config, they'll be filtered out"""
         if len(Config.excluded_domains) is 0:
             qry = 'SELECT excluded_domains.name, COUNT(r.domain_name) as count FROM requests r, domains d WHERE r.domain_name = d.id GROUP BY d.name ORDER BY COUNT(r.domain_name) DESC'
         else:
@@ -148,14 +155,17 @@ class DB_Connector:
             return result[0:min(count, len(result))]
 
     def getTopTenDomains(self):
+        """Returns the top ten called domains and their count"""
         return self.getDomains(10)
 
     def getTopTenDNSServer(self):
+        """Returns the top ten used dns-server and their count"""
         qry = 'SELECT s.ip, COUNT(r.server) as count FROM requests r, server s WHERE r.server = s.id GROUP BY s.ip ORDER BY COUNT(r.server) DESC'
         result = self.fetchAll(qry)
         return result[0:min(10, len(result))]
 
     def requestCount(self):
+        """Return the count of requests in Database. If there are excluded domains in Config, they'll be filtered out"""
         if len(Config.excluded_domains) is 0:
             qry = 'SELECT COUNT(*) FROM requests'
         else:
@@ -164,15 +174,20 @@ class DB_Connector:
         return self.fetch(qry)[0]
 
     def DNSCount(self):
+        """Returns the count of dns-server"""
         qry = 'SELECT COUNT(*) FROM server'
         return self.fetch(qry)[0]
 
 
 class Connection_handler:
+    """This class is an hacked version of singleton-pattern. Every thread can have zero or one db-connections"""
+
     connections = {}
+    """Maps thread-name to the related connection"""
 
     @staticmethod
     def getConnection() -> DB_Connector:
+        """Returns an DB_Connector for the current thread. Creates one and saves them in connections, if not exists"""
         thread_name = threading.currentThread().getName()
         if thread_name not in Connection_handler.connections:
             Connection_handler.connections[thread_name] = DB_Connector(Config.db_name)
@@ -182,6 +197,7 @@ class Connection_handler:
 
     @staticmethod
     def remomveConnection():
+        """Removes the threads DB_Connector"""
         thread_name = threading.currentThread().getName()
         del Connection_handler.connections[thread_name]
 

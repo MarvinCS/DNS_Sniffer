@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class ACTION(Enum):
+    """Enum to specify the performable actions"""
     SCAN = 1
     EVALUATE = 2
     INTERFACE = 3
@@ -10,7 +11,8 @@ class ACTION(Enum):
 
 
 def getAction():
-    parser = argparse.ArgumentParser() ## Erstellen eines neuen Parsers
+    """Creates an argument-parser and returns the action that should be performed"""
+    parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--scan', action="store_true", help="Use this option to start a new scan")
     parser.add_argument('-e', '--evaluate', action="store_true", help="Evaluate the results of previous scans")
     parser.add_argument('-i', '--interface', action="store_true",
@@ -18,7 +20,7 @@ def getAction():
     parser.add_argument('-g', '--gui', action="store_true",
                         help="Starts a gui. You still need root-permissions to scan a network")
 
-    args = parser.parse_args() # Speichern der Argumente (scann, evaluate,...)
+    args = parser.parse_args()
     if args.scan:
         return ACTION.SCAN
     elif args.evaluate:
