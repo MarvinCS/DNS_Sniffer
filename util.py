@@ -21,3 +21,4 @@ def myprint(string: str):
             print(string)
         else:
             Config._log_window.addItem(string)
+            Config._log_window.scrollToBottom()

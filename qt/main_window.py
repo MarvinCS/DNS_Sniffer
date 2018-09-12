@@ -11,7 +11,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidgetItem
 from network import *
 from qt.options_dialog import Options_dialog
-from visualisation import plotAllInOne
+from visualisation import Pie_Chart
 
 
 class Ui_MainWindow(object):
@@ -128,28 +128,28 @@ class Ui_MainWindow(object):
         """Starts/stops the scanning of dns-packages. Uses multiple threads for scanning, stopping and refreshing"""
         # Check if an interface is specified
         if Config.interface is None:
-            self.lv_log.addItem("Please press the \"Option\"-button and set an interface")
+            myprint("Please press the \"Option\"-button and set an interface")
         else:
             if self.btn_start.text() == "Start":
                 # Start the scanning and auto-refresh threads
                 self.scanning_thread = threading.Thread(target=self.__scan, daemon=True, name="scanning-thread")
                 self.scanning_thread.start()
                 if Config.update_interval is not None:
-                    self.auto_update_thread = threading.Thread(target=self.__auto_update, daemon=True, name="update_thread")
+                    self.auto_update_thread = threading.Thread(target=self.__auto_update, name="update_thread")
                     self.auto_update_thread.start()
             elif self.btn_start.text() == "Stop":
                 # Stop the scanning thread. Auto-refresh will stop automatically
-                self.btn_start.setText("Start")
-                Config._scanning_thread = False
-                stopping_thread = threading.Thread(target=Network.stopMonitorMode, name="stopping_thread")
+                stopping_thread = threading.Thread(target=self.__stop_scanning, name="stopping_thread")
                 stopping_thread.start()
 
     def __scan(self):
         """Start scanning for dns-packages"""
         self.btn_start.setText("Stop")
-        self.lv_log.addItem("Starting...")
+        self.btn_start.setDisabled(True)
+        myprint("Starting...")
         Config._scanning_thread = True
         Network.startMonitorMode()
+        self.btn_start.setDisabled(False)
         Network.captureDNS()
 
     def __auto_update(self):
@@ -158,6 +158,16 @@ class Ui_MainWindow(object):
             self.on_click_refresh()
             time.sleep(int(Config.update_interval))
         Connection_handler.remomveConnection()
+
+    def __stop_scanning(self):
+        """Stops scanning and resets the interface"""
+        myprint("Stopping...")
+        self.btn_start.setText("Start")
+        self.btn_start.setDisabled(True)
+        Config._scanning_thread = False
+        Network.stopMonitorMode()
+        myprint("Stopped")
+        self.btn_start.setDisabled(False)
 
     def on_click_refresh(self):
         """Refreshes the gui's domain- and dns-table"""
@@ -192,7 +202,7 @@ class Ui_MainWindow(object):
 
     def on_click_evaluate(self):
         """Generates and show an pie-chart based generated with matplotlib """
-        plotAllInOne()
+        Pie_Chart.plotAllInOne()
 
 
 if __name__ == "__main__":
