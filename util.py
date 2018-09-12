@@ -16,6 +16,7 @@ def executeAndSleep(command: str, _time=1):
 
 
 def myprint(string: str):
+    "Prints string to stdout, if I am not using a gui"
     if len(string) is not 0:
         if Config._log_window is None:
             print(string)
