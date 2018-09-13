@@ -5,10 +5,14 @@
 # Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
+import os
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, Qt
+from PyQt5.QtWidgets import QLineEdit
+
 from config import Config
 from qt.add_domain import Add_domain
+from qt.drop_dialog import Drop_DB_Dialog
 from qt.interface_chooser import Choose_interface_dialog
 
 
@@ -23,7 +27,7 @@ class Options_dialog(object):
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayoutWidget = QtWidgets.QWidget(Dialog)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 461, 121))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 461, 126))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -45,9 +49,15 @@ class Options_dialog(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.ti_db_name = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.ti_db_name.setObjectName("ti_db_name")
-        self.verticalLayout_2.addWidget(self.ti_db_name)
+        self.horizontalLayout_4.addWidget(self.ti_db_name)
+        self.btn_drop_db = QtWidgets.QPushButton(self.horizontalLayoutWidget)
+        self.btn_drop_db.setObjectName("btn_drop_db")
+        self.horizontalLayout_4.addWidget(self.btn_drop_db)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         self.ti_channel = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
         self.ti_channel.setObjectName("ti_channel")
         self.verticalLayout_2.addWidget(self.ti_channel)
@@ -87,7 +97,6 @@ class Options_dialog(object):
         self.btn_remove_domain.setObjectName("btn_remove_domain")
         self.verticalLayout_4.addWidget(self.btn_remove_domain)
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
-
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
@@ -96,6 +105,8 @@ class Options_dialog(object):
         Dialog.setTabOrder(self.ti_interface, self.btn_choose_interface)
         Dialog.setTabOrder(self.btn_choose_interface, self.lv_domains)
         Dialog.setTabOrder(self.lv_domains, self.btn_remove_domain)
+
+        # IMPORTANT
         self.save_dialog = Dialog
 
     def retranslateUi(self, Dialog):
@@ -106,16 +117,39 @@ class Options_dialog(object):
         self.lbl_channel.setText(_translate("Dialog", "Channel:"))
         self.lbl_interface.setText(_translate("Dialog", "Interface:"))
         self.lbl_auto_update.setText(_translate("Dialog", "Auto-update:"))
+        self.btn_drop_db.setText(_translate("Dialog", "Drop DB"))
         self.btn_choose_interface.setText(_translate("Dialog", "Choose"))
         self.btn_add_domain.setText(_translate("Dialog", "Add"))
         self.btn_remove_domain.setText(_translate("Dialog", "Remove"))
 
-    def init__buttons(self):
+    def init(self, Dialog):
+        """Init the ui"""
+        self.setupUi(Dialog)
+        self.init_buttons()
+        self.insert_data()
+        self.load_domains()
+        self.__db_exists()
+        self.ti_db_name.editingFinished.connect(self.__db_exists)
+
+    def __db_exists(self):
+        """Enables/disables the 'drop db' button, if there is no database with db typed (line edit) name"""
+        filename = "%s/%s" % (Config.project_path, str(self.ti_db_name.text()))
+        self.btn_drop_db.setDisabled(not os.path.isfile(filename))
+
+    def init_buttons(self):
         """Initialises the functionality of all buttons"""
         self.buttonBox.accepted.connect(self.__save)
         self.btn_add_domain.clicked.connect(self.__add_domain)
         self.btn_remove_domain.clicked.connect(self.__remove_domain)
         self.btn_choose_interface.clicked.connect(self.__choose_interface)
+        self.btn_drop_db.clicked.connect(self.__ask_drop_db)
+
+    def __ask_drop_db(self):
+        """Opens a new dialog and asks if you really want to drop the db"""
+        self.drop_dialog = QtWidgets.QDialog()
+        self.ui = Drop_DB_Dialog()
+        self.ui.init(self.drop_dialog)
+        self.drop_dialog.show()
 
     def __save(self):
         """Saves the configuration to the config.json-file"""
@@ -163,7 +197,6 @@ class Options_dialog(object):
             self.ti_interface.setText(str(Config.interface))
         if Config.update_interval is not None:
             self.ti_auto_update.setText(str(Config.update_interval))
-        self.load_domains()
 
     def load_domains(self):
         """Loads and displays all domains in the 'excluded'-list"""

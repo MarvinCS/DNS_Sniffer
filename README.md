@@ -15,5 +15,4 @@ A python3 based dns sniffing tool. Only works in public wifis
 
 ## TODO
 - gui options: 
-  - subdomain radio button
-  - db name 
+  - button to delete all data in database

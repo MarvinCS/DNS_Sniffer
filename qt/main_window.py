@@ -195,9 +195,7 @@ class Ui_MainWindow(object):
         """Opens the option-dialog"""
         self.dialog = QtWidgets.QDialog()
         self.ui = Options_dialog()
-        self.ui.setupUi(self.dialog)
-        self.ui.init__buttons()
-        self.ui.insert_data()
+        self.ui.init(self.dialog)
         self.dialog.show()
 
     def on_click_evaluate(self):

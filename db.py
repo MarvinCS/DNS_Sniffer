@@ -178,6 +178,11 @@ class DB_Connector:
         qry = 'SELECT COUNT(*) FROM server'
         return self.fetch(qry)[0]
 
+    def drop_database(self):
+        self.execute_query("DROP TABLE domains")
+        self.execute_query("DROP TABLE server")
+        self.execute_query("DROP TABLE requests")
+
 
 class Connection_handler:
     """This class is an hacked version of singleton-pattern. Every thread can have zero or one db-connections"""
@@ -200,6 +205,22 @@ class Connection_handler:
         """Removes the threads DB_Connector"""
         thread_name = threading.currentThread().getName()
         del Connection_handler.connections[thread_name]
+
+    @staticmethod
+    def drop_database() -> bool:
+        if len(Connection_handler.connections) > 1:
+            util.myprint("Please stop the scan to drop the database")
+            return False
+        try:
+            dbc = Connection_handler.getConnection()
+            dbc.execute_query("DROP TABLE domains")
+            dbc.execute_query("DROP TABLE server")
+            dbc.execute_query("DROP TABLE requests")
+        except Exception:
+            logger = getLogger("sql")
+            logger.exception("Error while dropping the database")
+            return False
+        return True
 
 
 if __name__ == '__main__':

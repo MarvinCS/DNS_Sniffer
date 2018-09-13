@@ -35,7 +35,7 @@
      <x>10</x>
      <y>10</y>
      <width>461</width>
-     <height>121</height>
+     <height>126</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -74,7 +74,18 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLineEdit" name="ti_db_name"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLineEdit" name="ti_db_name"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_drop_db">
+          <property name="text">
+           <string>Drop DB</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QLineEdit" name="ti_channel"/>
