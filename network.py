@@ -20,8 +20,8 @@ class Network:
         """Set the specified interface to monitor-mode"""
         if Config.interface is None:
             Config.interface = Config.chooseInterface()
-        executeAndSleep('ifconfig ' + Config.interface + ' down'),
-        executeAndSleep('iw dev ' + Config.interface + ' interface add mywlanmonitor type monitor')
+        executeAndSleep('ifconfig %s down' % Config.interface),
+        executeAndSleep('iw dev %s interface add mywlanmonitor type monitor' % Config.interface)
         executeAndSleep('ifconfig mywlanmonitor down')
         executeAndSleep('iw dev mywlanmonitor set type monitor')
         executeAndSleep('ifconfig mywlanmonitor up')
@@ -32,7 +32,7 @@ class Network:
         """Resets the normal state of interface"""
         executeAndSleep('ifconfig mywlanmonitor down')
         executeAndSleep('iw dev mywlanmonitor del')
-        executeAndSleep('ifconfig ' + Config.interface + ' up')
+        executeAndSleep('ifconfig %s up' % Config.interface)
         executeAndSleep('service network-manager restart')
 
     @staticmethod
@@ -42,7 +42,7 @@ class Network:
         try:
             sniff(iface=_interface, prn=Network.filterPackage, filter="udp port 53", store=0)
         except OSError:
-            Connection_handler.remomveConnection()
+            Connection_handler.remove_connection()
 
     @staticmethod
     def filterPackage(pkt: packet):
@@ -54,6 +54,8 @@ class Network:
                 request = re.search('DNS Qry "b\'.*\'', dns_str)
                 if request:
                     domain = re.search('\'.*\'', request.group(0)).group(0)[1:-2]
+                    if not Config.subdomains:
+                        domain = Network.remove_subdomain(domain)
                     src, dns_server = Network.getSrcAndDst(pkt)
                     myprint("Domain: %s, src: %s, dns-server: %s" % (domain, src, dns_server))
                     dbc = Connection_handler.getConnection()
@@ -61,10 +63,9 @@ class Network:
         except Exception:
             logger = getLogger("network")
             logger.exception("Fatal error in main loop")
-            pass
 
     @staticmethod
-    def getSrcAndDst(pkt: packet):
+    def getSrcAndDst(pkt: packet) -> (str, str):
         """Return source and destination of the given package"""
         if IP in pkt:
             return pkt[IP].src, pkt[IP].dst
@@ -72,7 +73,13 @@ class Network:
             return pkt[IPv6].src, pkt[IPv6].dst
 
     @staticmethod
-    def getDomain(dns_string: str):
-        """Delets the subdomain an the given domain-string"""
-        domain = re.search('\'.*\'', dns_string).group(0)[1:-2]
-        return tldextract.extract(domain).registered_domain
+    def remove_subdomain(domain: str) -> str:
+        """Trys to delet the subdomain an the given domain-string"""
+        try:
+            extract = tldextract.TLDExtract(
+                suffix_list_urls=["file://%s/%s" % (Config.project_path, "suffix_list.dat")])
+            extracted = extract(domain)
+            return "%s.%s" % (extracted.domain, extracted.suffix)
+        except Exception:
+            myprint("Error while deleting subdomain of %s" % domain)
+            return domain

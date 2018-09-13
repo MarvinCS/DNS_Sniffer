@@ -1,1 +1,1 @@
-{"db_name": "dummy2.db", "channel": "6", "auto_update": "3", "interface": "wlp5s0", "excluded_domains": ["google.com", "gstatic.com", "api.xing.com"]}
+{"db_name": "starbucks.db", "channel": "6", "auto_update": "3", "interface": "wlp5s0", "excluded_domains": ["google.com", "gstatic.com", "api.xing.com"], "subdomains": false}

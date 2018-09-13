@@ -4,6 +4,7 @@ import os
 
 class Config:
     # Parameters from config.json
+    subdomains = False
     db_name = "dns.db"
     project_path = os.path.dirname(os.path.abspath(__file__))
     channel = None
@@ -19,7 +20,7 @@ class Config:
     def parse_config(path_to_config=None):
         """Loads the information from the config.json-file to this class"""
         if path_to_config is None:
-            path_to_config = Config.project_path + "/config.json"
+            path_to_config = "%s/config.json" % Config.project_path
         with open(path_to_config) as f:
             data = json.load(f)
         Config.channel = data["channel"]
@@ -31,6 +32,7 @@ class Config:
             Config.db_name = data["db_name"]
         if data["auto_update"] is not None:
             Config.update_interval = data["auto_update"]
+        Config.subdomains = data["subdomains"]
 
     @staticmethod
     def chooseInterface():
@@ -43,7 +45,8 @@ class Config:
     def save():
         """Saves the information in this class to the json-file"""
         data = {"db_name": Config.db_name, "channel": Config.channel, "auto_update": Config.update_interval,
-                "interface": Config.interface, "excluded_domains": Config.excluded_domains}
-        path_to_config = Config.project_path + "/config.json"
+                "interface": Config.interface, "excluded_domains": Config.excluded_domains,
+                "subdomains": Config.subdomains}
+        path_to_config = "%s/config.json" % Config.project_path
         with open(path_to_config, 'w') as outfile:
             json.dump(data, outfile)

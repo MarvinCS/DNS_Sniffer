@@ -7,9 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
-
 from db import Connection_handler
+from qt.drop_error_dialog import Drop_Error_Dialog
 
 
 class Drop_DB_Dialog(object):
@@ -48,29 +47,13 @@ class Drop_DB_Dialog(object):
 
     def drop_db(self):
         """Trys to drop the database"""
-        # dropped = Connection_handler.drop_database()
-        dropped = False
+        dropped = Connection_handler.drop_database()
         if not dropped:
-            print(1)
-            error_message = "There was an error while dropping the Database! Please be sure you stopped the scan and try again"
-            self.show_error(error_message)
+            self.show_error()
 
-    def show_error(self, e):
-        """TODO"""
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText(e)
-        msg.setWindowTitle("Error")
-        msg.show()
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Drop_DB_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
-    sys.exit(app.exec_())
+    def show_error(self):
+        """Shows an error-dialog"""
+        self.drop_dialog = QtWidgets.QDialog()
+        self.ui = Drop_Error_Dialog()
+        self.ui.setupUi(self.drop_dialog)
+        self.drop_dialog.show()

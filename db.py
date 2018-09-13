@@ -17,13 +17,18 @@ class DB_Connector:
         else:
             Connection_handler.connections[thread_name] = self
         self.connection = sqlite3.connect(db_name)
-        self.initialise()
+        self.db_name = db_name
+        # self.initialise()
+
+    def __del__(self):
+        """Destructor (close connection)"""
+        self.connection.close()
 
     def initialise(self):
         """Initialises the tables of the database"""
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
         c = self.connection.cursor()
-        for file in os.listdir(ROOT_DIR + '/sql'):
+        for file in os.listdir('%s/sql' % ROOT_DIR):
             if file.endswith('.sql'):
                 qry = open(ROOT_DIR + os.path.join("/sql", file), 'r').read()
                 c.execute(qry)
@@ -178,10 +183,12 @@ class DB_Connector:
         qry = 'SELECT COUNT(*) FROM server'
         return self.fetch(qry)[0]
 
-    def drop_database(self):
-        self.execute_query("DROP TABLE domains")
-        self.execute_query("DROP TABLE server")
-        self.execute_query("DROP TABLE requests")
+    def delete_all(self):
+        """Delets all data from database"""
+        self.execute_query("DELETE FROM domains")
+        self.execute_query("DELETE FROM server")
+        self.execute_query("DELETE FROM requests")
+        self.connection.commit()
 
 
 class Connection_handler:
@@ -197,33 +204,34 @@ class Connection_handler:
         if thread_name not in Connection_handler.connections:
             Connection_handler.connections[thread_name] = DB_Connector(Config.db_name)
             if len(Connection_handler.connections) == 1:
+                # Be sure that the db is initialised
                 Connection_handler.connections[thread_name].initialise()
+        elif Connection_handler.connections[thread_name].db_name != Config.db_name:
+            # If db_name has changed: Create a new instance of DB_Connector for new database
+            Connection_handler.remove_connection()
+            # Create a new instance with recursion \o/
+            Connection_handler.getConnection()
         return Connection_handler.connections[thread_name]
 
     @staticmethod
-    def remomveConnection():
+    def remove_connection():
         """Removes the threads DB_Connector"""
         thread_name = threading.currentThread().getName()
-        del Connection_handler.connections[thread_name]
+        if thread_name in Connection_handler.connections:
+            del Connection_handler.connections[thread_name]
 
     @staticmethod
     def drop_database() -> bool:
+        """Trys to drop the database"""
         if len(Connection_handler.connections) > 1:
             util.myprint("Please stop the scan to drop the database")
             return False
         try:
             dbc = Connection_handler.getConnection()
-            dbc.execute_query("DROP TABLE domains")
-            dbc.execute_query("DROP TABLE server")
-            dbc.execute_query("DROP TABLE requests")
+            dbc.delete_all()
+            util.myprint("Database %s cleared" % Config.db_name)
         except Exception:
             logger = getLogger("sql")
             logger.exception("Error while dropping the database")
             return False
         return True
-
-
-if __name__ == '__main__':
-    dbc = DB_Connector()
-    dbc.initialise()
-    print(dbc.requestCount())
