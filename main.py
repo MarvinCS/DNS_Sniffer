@@ -36,7 +36,6 @@ def interfaceToMonitorMode():
 
 def gui():
     """Creats the gui's main-window"""
-    Config._scanning_thread = False
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

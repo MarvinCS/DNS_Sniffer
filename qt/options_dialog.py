@@ -160,6 +160,7 @@ class Options_dialog(object):
 
     def __ask_drop_db(self):
         """Opens a new dialog and asks if you really want to drop the db"""
+        Config.db_name = self.ti_db_name.text()
         self.drop_dialog = QtWidgets.QDialog()
         self.ui = Drop_DB_Dialog()
         self.ui.init(self.drop_dialog)

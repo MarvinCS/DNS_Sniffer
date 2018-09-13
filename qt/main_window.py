@@ -5,9 +5,6 @@
 # Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
-import threading
-from sqlite3 import OperationalError
-
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidgetItem
 from network import *
@@ -104,6 +101,7 @@ class Ui_MainWindow(object):
 
     def init(self, MainWindow):
         """Init all"""
+        Config._scanning_thread = False
         self.setupUi(MainWindow)
         self.init_buttons()
         self.init_tables()
