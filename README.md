@@ -7,12 +7,6 @@ A python3 based dns sniffing tool. Only works in public wifis
 3. Install Python libraries with pip: `pip install scapy sympy tldextract matplotlib` 
 
 ## Usage
-1. Download or clone tis repository
-1. (Edit the *config.json*) 
-1. Run *main.py* with root permissions to scan a network
-1. Run *main.py* to evaluate your results
-
-
-## TODO
-- gui options: 
-  - button to delete all data in database
+1. Download or clone this repository
+1. Navigate to the repository
+1. Run *python main.py --gui*
