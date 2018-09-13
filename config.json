@@ -1,1 +1,1 @@
-{"db_name": "starbucks.db", "channel": "6", "auto_update": "3", "interface": "wlp5s0", "excluded_domains": ["google.com", "gstatic.com", "api.xing.com"], "subdomains": false}
+{"db_name": "starbucks.db", "channel": "6", "auto_update": "1", "interface": "wlp5s0", "excluded_domains": ["google.com", "gstatic.com", "api.xing.com", "moodle.ruhr-uni-bochum.de"], "subdomains": false}

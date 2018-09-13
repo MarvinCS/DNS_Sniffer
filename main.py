@@ -55,5 +55,4 @@ if __name__ == '__main__':
     elif action == ACTION.EVALUATE:
         Pie_Chart.plotAllInOne()
     elif action == ACTION.GUI:
-        print(Config.db_name)
         gui()
